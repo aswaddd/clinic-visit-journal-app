@@ -1,7 +1,18 @@
-import { Text, SafeAreaView, View } from "react-native";
 import Button from '@/components/Button';
+import { router } from 'expo-router';
+import { StyleSheet, View } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Index() {
+
+  const handleNewVisitPreparation = () => {
+    alert("Button Clicked!");
+  };
+
+  const handleSeePastVisit = () => {
+    router.push('../pages/pastVisitsPage');
+  };
+
   return (
     <SafeAreaView
       style={{
@@ -10,19 +21,26 @@ export default function Index() {
         alignItems: "center",
       }}
     >
-      <Text style={{ flex: 1, padding: 20, color:'#4b4b4bff' }}>Help your doctor understand your symptoms better with our simple tools</Text>
-      <View style={{ flex: 2, gap: 15 }}>
+      <View style={{ flex: 1, gap: 15, justifyContent: 'center', alignItems: 'center' }}>
         <Button 
-          label="Describe your symptoms" 
-          onPress={() => alert("Button Clicked!")}
-          style={{ borderWidth: 1, borderRadius: 18, borderColor:'#007AFF' }}  
+          label="Add visit record" 
+          onPress={handleNewVisitPreparation}
+          style={styles.button}  
         />
         <Button 
-          label="Take survey" 
-          onPress={() => alert("Button Clicked!")}
-          style={{ borderWidth: 1, borderRadius: 18, borderColor:'#007AFF' }}  
+          label="See past visits" 
+          onPress={handleSeePastVisit}
+          style={styles.button}  
         />
       </View>
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  button: {
+    borderWidth: 1,
+    borderRadius: 18,
+    borderColor: '#007AFF',
+  },
+});
