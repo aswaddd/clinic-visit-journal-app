@@ -1,8 +1,5 @@
 import PastVisit from "@/components/PastVisit";
-import { File, Paths } from 'expo-file-system';
 import { ScrollView, StyleSheet } from "react-native";
-
-const dataFile = new File(Paths.document + 'healthJournalAppData.json'); 
 
 /**
  * TODO: search, sort & filter for record history, calendar view? perhaps later.
