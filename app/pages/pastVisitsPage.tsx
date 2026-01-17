@@ -3,6 +3,15 @@ import { loadVisits, VisitRecord } from "@/lib/storageUtils";
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, ScrollView, StyleSheet, Text } from "react-native";
 
+/**
+ * TODO: when one visit is expanded (showMore is true) then the others will collapse.
+ * Maybe the user can set this to their preference as well.
+ * TODO: add pull to refresh functionality
+ * TODO: add "no visits recorded" message
+ * TODO: add filtering/sorting options
+ * TODO: add search functionality
+ */
+
 export default function PastVisitsPage() {
     const [visits, setVisits] = useState<VisitRecord[]>([]);
     const [loading, setLoading] = useState(true);

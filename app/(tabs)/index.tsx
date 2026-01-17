@@ -5,8 +5,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Index() {
 
-  const handleNewVisitPreparation = () => {
-    alert("Button Clicked!");
+  const handleAddNewVisit = () => {
+    router.push('../pages/addVisitPage');
   };
 
   const handleSeePastVisit = () => {
@@ -24,7 +24,7 @@ export default function Index() {
       <View style={{ flex: 1, gap: 15, justifyContent: 'center', alignItems: 'center' }}>
         <Button 
           label="Add visit record" 
-          onPress={handleNewVisitPreparation}
+          onPress={handleAddNewVisit}
           style={styles.button}  
         />
         <Button 
