@@ -1,7 +1,10 @@
+import { addVisit } from "@/lib/storageUtils";
 import Feather from "@expo/vector-icons/Feather";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { router } from "expo-router";
 import { useState } from "react";
 import {
+    Alert,
     Modal,
     ScrollView,
     StyleSheet,
@@ -10,12 +13,6 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
-
-/**
- * TODO: Form validation
- * TODO: Save button functionality
- * TODO: Form Submission
- */
 
 export default function AddVisitPage() {
   const [formData, setFormData] = useState({
@@ -35,12 +32,22 @@ export default function AddVisitPage() {
     "dateTime",
   );
   const [tempDate, setTempDate] = useState(new Date());
+  const [errors, setErrors] = useState({
+    dateTime: false,
+    location: false,
+  });
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
     }));
+    if (field === "dateTime" || field === "location") {
+      setErrors((prev) => ({
+        ...prev,
+        [field]: false,
+      }));
+    }
   };
 
   const openDatePicker = (field: "dateTime" | "nextVisit") => {
@@ -72,8 +79,33 @@ export default function AddVisitPage() {
       ...prev,
       [pickerField]: formatted,
     }));
+    if (pickerField === "dateTime") {
+      setErrors((prev) => ({ ...prev, dateTime: false }));
+    }
     setPickerVisible(false);
     setPickerMode("date");
+  };
+
+  const validateForm = async () => {
+    const newErrors = {
+      dateTime: formData.dateTime.trim() === "",
+      location: formData.location.trim() === "",
+    };
+    setErrors(newErrors);
+
+    if (!newErrors.dateTime && !newErrors.location) {
+      try {
+        await addVisit(formData);
+        Alert.alert("Success", "Visit record saved successfully!", [
+          {
+            text: "OK",
+            onPress: () => router.back(),
+          },
+        ]);
+      } catch {
+        Alert.alert("Error", "Failed to save visit record. Please try again.");
+      }
+    }
   };
 
   return (
@@ -96,13 +128,16 @@ export default function AddVisitPage() {
           </View>
           <TouchableOpacity onPress={() => openDatePicker("dateTime")}>
             <TextInput
-              style={styles.input}
+              style={[styles.input, errors.dateTime && styles.inputError]}
               placeholder="e.g., January 17, 2026 at 2:00 PM"
               value={formData.dateTime}
               editable={false}
               pointerEvents="none"
             />
           </TouchableOpacity>
+          {errors.dateTime && (
+            <Text style={styles.errorText}>Required field</Text>
+          )}
         </View>
 
         <View>
@@ -116,11 +151,14 @@ export default function AddVisitPage() {
             <Text style={styles.label}>Location</Text>
           </View>
           <TextInput
-            style={styles.input}
+            style={[styles.input, errors.location && styles.inputError]}
             placeholder="e.g., City Hospital"
             value={formData.location}
             onChangeText={(value) => handleInputChange("location", value)}
           />
+          {errors.location && (
+            <Text style={styles.errorText}>Required field</Text>
+          )}
         </View>
 
         <View>
@@ -236,7 +274,9 @@ export default function AddVisitPage() {
             />
           </TouchableOpacity>
         </View>
-        <Text style={styles.saveButton}>Save</Text>
+        <TouchableOpacity onPress={validateForm}>
+          <Text style={styles.saveButton}>Save</Text>
+        </TouchableOpacity>
       </View>
       <Modal visible={pickerVisible} transparent>
         <View style={styles.modalOverlay}>
@@ -298,6 +338,14 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 10,
     fontSize: 14,
+  },
+  inputError: {
+    borderColor: "red",
+  },
+  errorText: {
+    color: "red",
+    fontSize: 12,
+    marginTop: 4,
   },
   multilineInput: {
     borderWidth: 1,
