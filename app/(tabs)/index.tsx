@@ -7,17 +7,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function Index() {
   const [addModalVisible, setAddModalVisible] = useState(false);
 
-  const handleAddNewVisit = () => {
-    setAddModalVisible(true);
+  const toggleAddVisitModal = () => {
+    setAddModalVisible(!addModalVisible);
   };
 
   const handleInputVisitForm = () => {
     setAddModalVisible(false);
     router.push("../pages/addVisitPage");
-  };
-
-  const closeModal = () => {
-    setAddModalVisible(false);
   };
 
   const handleSeePastVisit = () => {
@@ -42,7 +38,7 @@ export default function Index() {
       >
         <Button
           label="Add visit record"
-          onPress={() => setAddModalVisible(true)}
+          onPress={() => toggleAddVisitModal}
           style={styles.button}
         />
         <Button
@@ -54,7 +50,7 @@ export default function Index() {
       <Modal visible={addModalVisible} animationType="fade" transparent={true}>
         <TouchableOpacity
           style={styles.modalContainer}
-          onPress={() => setAddModalVisible(false)}
+          onPress={() => toggleAddVisitModal}
         >
           <View style={styles.modalCard}>
             <Text style={styles.modalTitle}>Add Visit Record</Text>

@@ -29,7 +29,11 @@ export default function PastVisit(props: Props) {
   return (
     <View style={styles.container}>
       <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-        <Text style={styles.recordTitle}>Visit Record</Text>
+        <FieldRecord
+          title="Date and Time"
+          icon="calendar"
+          content={data.dateTime}
+        />
         <Text
           style={styles.editButton}
           onPress={() => handleEditPastVisit(data)}
@@ -37,13 +41,12 @@ export default function PastVisit(props: Props) {
           Edit
         </Text>
       </View>
-      <FieldRecord
-        title="Date and Time"
-        icon="calendar"
-        content={data.dateTime}
-      />
-      <FieldRecord title="Location" icon="map-pin" content={data.location} />
-      <FieldRecord title="Doctor" icon="user" content={data.doctor} />
+      {showMore && (
+        <FieldRecord title="Location" icon="map-pin" content={data.location} />
+      )}
+      {showMore && (
+        <FieldRecord title="Doctor" icon="user" content={data.doctor} />
+      )}
       {showMore && (
         <FieldRecord
           title="Prescription"
