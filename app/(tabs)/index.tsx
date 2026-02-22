@@ -1,7 +1,16 @@
 import Button from "@/components/Button";
+import * as DocumentPicker from "expo-document-picker";
+import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
 import { useState } from "react";
-import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  Modal,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Index() {
@@ -18,6 +27,26 @@ export default function Index() {
 
   const handleSeePastVisit = () => {
     router.push("../pages/pastVisitsPage");
+  };
+
+  const handleImportVisit = () => {
+    Alert.alert("Import Visit", "Choose source", [
+      {
+        text: "Photos",
+        onPress: async () => {
+          const result = await ImagePicker.launchImageLibraryAsync();
+          if (!result.canceled) console.log("success");
+        },
+      },
+      {
+        text: "Files",
+        onPress: async () => {
+          const result = await DocumentPicker.getDocumentAsync();
+          if (result.assets?.length) console.log("success");
+        },
+      },
+      { text: "Cancel", style: "cancel" },
+    ]);
   };
 
   return (
@@ -38,7 +67,7 @@ export default function Index() {
       >
         <Button
           label="Add visit record"
-          onPress={() => toggleAddVisitModal}
+          onPress={() => toggleAddVisitModal()}
           style={styles.button}
         />
         <Button
@@ -50,7 +79,7 @@ export default function Index() {
       <Modal visible={addModalVisible} animationType="fade" transparent={true}>
         <TouchableOpacity
           style={styles.modalContainer}
-          onPress={() => toggleAddVisitModal}
+          onPress={() => toggleAddVisitModal()}
         >
           <View style={styles.modalCard}>
             <Text style={styles.modalTitle}>Add Visit Record</Text>
@@ -60,7 +89,11 @@ export default function Index() {
               style={styles.buttonModal}
               onPress={handleInputVisitForm}
             />
-            <Button label="Import Visit" style={styles.buttonModal} />
+            <Button
+              label="Import Visit"
+              style={styles.buttonModal}
+              onPress={handleImportVisit}
+            />
           </View>
         </TouchableOpacity>
       </Modal>
