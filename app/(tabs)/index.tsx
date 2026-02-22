@@ -1,4 +1,5 @@
 import Button from "@/components/Button";
+import { extractTextFromImage } from "@/lib/ocrUtils";
 import * as DocumentPicker from "expo-document-picker";
 import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
@@ -35,7 +36,11 @@ export default function Index() {
         text: "Photos",
         onPress: async () => {
           const result = await ImagePicker.launchImageLibraryAsync();
-          if (!result.canceled) console.log("success");
+          if (!result.canceled) {
+            const imageUri = result.assets[0].uri;
+            const text = await extractTextFromImage(imageUri);
+            console.log(text);
+          }
         },
       },
       {
