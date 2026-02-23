@@ -6,18 +6,18 @@ import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   Alert,
   Modal,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from "react-native";
 import { LLAMA3_2_1B, useLLM } from "react-native-executorch";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Index() {
-  const [addModalVisible, setAddModalVisible] = useState(false);
+  const [isExtracting, setIsExtracting] = useState(false);
   const llm = useLLM({ model: LLAMA3_2_1B });
 
   useEffect(() => {
@@ -29,11 +29,29 @@ export default function Index() {
   }, [llm.isReady, llm.error, llm.downloadProgress]);
 
   const toggleAddVisitModal = () => {
-    setAddModalVisible(!addModalVisible);
+    Alert.alert("Add Visit Record", undefined, [
+      {
+        text: "Scan Visit",
+        onPress: () => {
+          // Scan functionality
+        },
+      },
+      {
+        text: "Input Visit Form",
+        onPress: handleInputVisitForm,
+      },
+      {
+        text: "Import Visit",
+        onPress: handleImportVisit,
+      },
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+    ]);
   };
 
   const handleInputVisitForm = () => {
-    setAddModalVisible(false);
     router.push("../pages/addVisitPage");
   };
 
@@ -60,8 +78,14 @@ export default function Index() {
             const ocrText = await extractTextFromImage(imageUri);
             console.log("Extracted OCR Text:", ocrText);
 
+            setIsExtracting(true);
             const formData = await extractVisitDataFromText(ocrText, llm);
+            setIsExtracting(false);
             console.log(formData);
+            router.push({
+              pathname: "../pages/addVisitPage",
+              params: { formData: JSON.stringify(formData) },
+            });
           }
         },
       },
@@ -112,26 +136,10 @@ export default function Index() {
           style={styles.button}
         />
       </View>
-      <Modal visible={addModalVisible} animationType="fade" transparent={true}>
-        <TouchableOpacity
-          style={styles.modalContainer}
-          onPress={() => toggleAddVisitModal()}
-        >
-          <View style={styles.modalCard}>
-            <Text style={styles.modalTitle}>Add Visit Record</Text>
-            <Button label="Scan Visit" style={styles.buttonModal} />
-            <Button
-              label="Input Visit Form"
-              style={styles.buttonModal}
-              onPress={handleInputVisitForm}
-            />
-            <Button
-              label="Import Visit"
-              style={styles.buttonModal}
-              onPress={handleImportVisit}
-            />
-          </View>
-        </TouchableOpacity>
+      <Modal visible={isExtracting} transparent={true}>
+        <View style={styles.loadingOverlay}>
+          <ActivityIndicator size="large" color="#007AFF" />
+        </View>
       </Modal>
     </SafeAreaView>
   );
@@ -143,32 +151,10 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     borderColor: "#007AFF",
   },
-  buttonModal: {
-    borderWidth: 1,
-    borderRadius: 18,
-    borderColor: "#007AFF",
-    width: "90%",
-  },
-  modalContainer: {
+  loadingOverlay: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  modalCard: {
-    backgroundColor: "white",
-    borderWidth: 1,
-    borderColor: "#007AFF",
-    borderRadius: 18,
-    width: "80%",
-    padding: 20,
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 12,
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 10,
   },
 });

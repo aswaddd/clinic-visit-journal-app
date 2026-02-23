@@ -1,29 +1,36 @@
 import { addVisit } from "@/lib/storageUtils";
 import Feather from "@expo/vector-icons/Feather";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import {
-    Alert,
-    Modal,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Alert,
+  Modal,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 export default function AddVisitPage() {
+  const params = useLocalSearchParams();
+  const initialFormData = params.formData
+    ? typeof params.formData === "string"
+      ? JSON.parse(params.formData)
+      : params.formData
+    : null;
+
   const [formData, setFormData] = useState({
-    dateTime: "",
-    location: "",
-    doctor: "",
-    prescription: "",
-    diagnosis: "",
-    doctorNote: "",
-    personalNote: "",
-    nextVisit: "",
+    dateTime: initialFormData?.dateTime || "",
+    location: initialFormData?.location || "",
+    doctor: initialFormData?.doctor || "",
+    prescription: initialFormData?.prescription || "",
+    diagnosis: initialFormData?.diagnosis || "",
+    doctorNote: initialFormData?.doctorNote || "",
+    personalNote: initialFormData?.personalNote || "",
+    nextVisit: initialFormData?.nextVisit || "",
   });
 
   const [pickerVisible, setPickerVisible] = useState(false);
