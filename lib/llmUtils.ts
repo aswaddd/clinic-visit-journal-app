@@ -23,16 +23,17 @@ export async function extractVisitDataFromText(
     const systemPrompt = `You are a medical data extraction assistant. Extract medical visit information from text and return ONLY a valid JSON object.
 
                           Extract these fields:
-                          - dateTime: date and time of the visit (format: "Month DD, YYYY at HH:MM AM/PM"). If time is not specified, use "at 00:00 AM"
-                          - location: clinic or hospital location name
-                          - doctor: doctor's name
-                          - diagnosis: medical diagnosis or findings
-                          - prescription: medications and duration
-                          - doctorNote: clinical notes from doctor
-                          - personalNote: any other information not captured above
-                          - nextVisit: scheduled date and time for next visit (same format as dateTime). If time is not specified, use "at 00:00 AM"
+                          - dateTime
+                          - location
+                          - doctor
+                          - diagnosis
+                          - prescription
+                          - doctorNote
+                          - personalNote
+                          - nextVisit
 
                           If a field is not found, use empty string ("").
+                          IMPORTANT: Return ONLY the JSON object, no other text, no explanation. no labels. just the JSON starting with { and ending with }.
 
                           Example output format:
                           {
@@ -44,9 +45,7 @@ export async function extractVisitDataFromText(
                             "doctorNote": "clinical observations",
                             "personalNote": "patient notes or unidentified info",
                             "nextVisit": "February 28, 2026 at 9:41 PM"
-                          }
-
-                          IMPORTANT: Return ONLY the JSON object, no other text, no explanation. no labels. just the JSON starting and ending with {}.`;
+                          }`;
 
     const userPrompt = `Extract medical visit data from this text:\n\n${ocrText}`;
 
