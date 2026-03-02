@@ -1,50 +1,30 @@
-# Welcome to your Expo app 👋
+# clinic visit journal app
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+a digital storage app for your clinic visit records. take photos of your physical prescriptions and medical visit records, and store them securely on your phone. all storage is local and the llm model runs locally to ensure your privacy and security (unless your phone itself is compromised).
 
-## Get started
+## setup
 
-1. Install dependencies
+1. install dependencies
 
    ```bash
    npm install
    ```
 
-2. Start the app
+2. start the app
 
    ```bash
    npx expo start
    ```
 
-In the output, you'll find options to open the app in a
+   in the output, you'll find options to open the app in an [android emulator](https://docs.expo.dev/workflow/android-studio-emulator/), [ios simulator](https://docs.expo.dev/workflow/ios-simulator/), or [expo go](https://expo.dev/go).
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## how to use
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+1. **add a visit**: tap the "manual" button under "new visit" and fill in visit details (date, doctor, clinic name, etc.).
+2. **capture records**: take a photo of your prescription or medical record. the app will extract and organize the text using local ocr and llm processing.
+3. **view your history**: browse past visits in the "past visits" tab to review all your stored records.
+4. **edit or delete**: tap any visit to edit details or delete records as needed.
 
-## Get a fresh project
+## Notes
 
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+currently supports image formats: **jpeg** and **png**. future plans include pdf support, multi-file uploads, user profiles, visit reminders, and cloud sync options.
