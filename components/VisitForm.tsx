@@ -1,8 +1,11 @@
 import Feather from "@expo/vector-icons/Feather";
-import DateTimePicker from "@react-native-community/datetimepicker";
+import DateTimePicker, {
+  DateTimePickerEvent,
+} from "@react-native-community/datetimepicker";
 import { useState } from "react";
 import {
   Modal,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -72,16 +75,8 @@ export default function VisitForm({ title, subtitle, initialData, onSave, onDele
     setPickerVisible(true);
   };
 
-  const handleDateChange = (_: any, date?: Date) => {
-    if (date) setTempDate(date);
-  };
-
-  const handlePickerAction = () => {
-    if (pickerMode === "date") {
-      setPickerMode("time");
-      return;
-    }
-    const formatted = tempDate.toLocaleString("en-US", {
+  const formatAndApply = (date: Date) => {
+    const formatted = date.toLocaleString("en-US", {
       year: "numeric",
       month: "long",
       day: "numeric",
@@ -92,6 +87,37 @@ export default function VisitForm({ title, subtitle, initialData, onSave, onDele
     handleChange(pickerField, formatted);
     setPickerVisible(false);
     setPickerMode("date");
+  };
+
+  const handleDateChange = (event: DateTimePickerEvent, date?: Date) => {
+    if (Platform.OS === "android") {
+      if (event.type === "dismissed") {
+        setPickerVisible(false);
+        setPickerMode("date");
+        return;
+      }
+      if (date) {
+        const selected = date;
+        if (pickerMode === "date") {
+          setTempDate(selected);
+          setPickerMode("time");
+        } else {
+          const merged = new Date(tempDate);
+          merged.setHours(selected.getHours(), selected.getMinutes());
+          formatAndApply(merged);
+        }
+      }
+      return;
+    }
+    if (date) setTempDate(date);
+  };
+
+  const handlePickerAction = () => {
+    if (pickerMode === "date") {
+      setPickerMode("time");
+      return;
+    }
+    formatAndApply(tempDate);
   };
 
   const handleSave = () => {
@@ -168,26 +194,37 @@ export default function VisitForm({ title, subtitle, initialData, onSave, onDele
         </View>
       </View>
 
-      <Modal visible={pickerVisible} transparent>
-        <View style={styles.modalOverlay}>
-          <View style={styles.pickerContainer}>
-            <Text style={styles.pickerTitle}>
-              {pickerMode === "date" ? "Select Date" : "Select Time"}
-            </Text>
-            <DateTimePicker
-              value={tempDate}
-              mode={pickerMode}
-              display="spinner"
-              onChange={handleDateChange}
-            />
-            <Pressable style={styles.pickerBtn} onPress={handlePickerAction}>
-              <Text style={styles.pickerBtnText}>
-                {pickerMode === "date" ? "Next" : "Done"}
+      {pickerVisible && Platform.OS === "android" && (
+        <DateTimePicker
+          value={tempDate}
+          mode={pickerMode}
+          display="default"
+          onChange={handleDateChange}
+        />
+      )}
+
+      {Platform.OS === "ios" && (
+        <Modal visible={pickerVisible} transparent>
+          <View style={styles.modalOverlay}>
+            <View style={styles.pickerContainer}>
+              <Text style={styles.pickerTitle}>
+                {pickerMode === "date" ? "Select Date" : "Select Time"}
               </Text>
-            </Pressable>
+              <DateTimePicker
+                value={tempDate}
+                mode={pickerMode}
+                display="spinner"
+                onChange={handleDateChange}
+              />
+              <Pressable style={styles.pickerBtn} onPress={handlePickerAction}>
+                <Text style={styles.pickerBtnText}>
+                  {pickerMode === "date" ? "Next" : "Done"}
+                </Text>
+              </Pressable>
+            </View>
           </View>
-        </View>
-      </Modal>
+        </Modal>
+      )}
     </ScrollView>
   );
 }
