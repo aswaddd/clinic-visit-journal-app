@@ -2,16 +2,7 @@ import PastVisit from "@/components/PastVisit";
 import { loadVisits, VisitRecord } from "@/lib/storageUtils";
 import { useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
-import { ActivityIndicator, ScrollView, StyleSheet, Text } from "react-native";
-
-/**
- * TODO: when one visit is expanded (showMore is true) then the others will collapse.
- * Maybe the user can set this to their preference as well.
- * TODO: add pull to refresh functionality
- * TODO: add filtering/sorting options
- * TODO: add search functionality
- * TODO: users can edit this component to reorder what info they want to see first.
- */
+import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from "react-native";
 
 export default function PastVisitsPage() {
   const [visits, setVisits] = useState<VisitRecord[]>([]);
@@ -19,32 +10,35 @@ export default function PastVisitsPage() {
 
   useFocusEffect(
     useCallback(() => {
-      loadData();
+      (async () => {
+        try {
+          setVisits(await loadVisits());
+        } catch (error) {
+          console.error("Error loading visits:", error);
+        } finally {
+          setLoading(false);
+        }
+      })();
     }, []),
   );
 
-  const loadData = async () => {
-    try {
-      const loadedVisits = await loadVisits();
-      setVisits(loadedVisits);
-    } catch (error) {
-      console.error("Error loading visits:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   if (loading) {
-    return <ActivityIndicator size="large" />;
+    return (
+      <View style={styles.center}>
+        <ActivityIndicator size="large" color="#3B82F6" />
+      </View>
+    );
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.mainContainer}>
+    <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
       {visits.length === 0 ? (
-        <Text>No visit records found.</Text>
+        <View style={styles.center}>
+          <Text style={styles.emptyText}>No visit records yet.</Text>
+        </View>
       ) : (
-        visits.map((visit, index) => (
-          <PastVisit key={`${visit.dateTime}-${index}`} {...visit} />
+        visits.map((visit, i) => (
+          <PastVisit key={visit.id || `${visit.dateTime}-${i}`} {...visit} />
         ))
       )}
     </ScrollView>
@@ -52,11 +46,23 @@ export default function PastVisitsPage() {
 }
 
 const styles = StyleSheet.create({
-  mainContainer: {
-    padding: 3,
-    alignItems: "center",
+  screen: {
+    flex: 1,
+    backgroundColor: "#F9FAFB",
+  },
+  content: {
+    padding: 16,
+    gap: 12,
+    paddingBottom: 32,
+  },
+  center: {
+    flex: 1,
     justifyContent: "center",
-    marginTop: 30,
-    gap: 20,
+    alignItems: "center",
+    backgroundColor: "#F9FAFB",
+  },
+  emptyText: {
+    fontSize: 16,
+    color: "#6B7280",
   },
 });

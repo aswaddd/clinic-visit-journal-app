@@ -1,6 +1,7 @@
+import Feather from "@expo/vector-icons/Feather";
 import { router } from "expo-router";
 import { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import FieldRecord from "./FieldRecord";
 
 type Props = {
@@ -16,105 +17,110 @@ type Props = {
 };
 
 export default function PastVisit(props: Props) {
-  const data = props;
-  const [showMore, setShowMore] = useState(false);
+  const [expanded, setExpanded] = useState(false);
 
-  const handleEditPastVisit = (data: Props) => {
+  const handleEdit = () => {
     router.push({
       pathname: "../pages/editVisitPage",
-      params: { visitId: data.id || data.dateTime },
+      params: { visitId: props.id || props.dateTime },
     });
   };
 
   return (
-    <View style={styles.container}>
-      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-        <FieldRecord
-          title="Date and Time"
-          icon="calendar"
-          content={data.dateTime}
-        />
-        <Text
-          style={styles.editButton}
-          onPress={() => handleEditPastVisit(data)}
-        >
-          Edit
-        </Text>
+    <View style={styles.card}>
+      <View style={styles.topRow}>
+        <View style={styles.dateRow}>
+          <Feather name="calendar" size={16} color="#3B82F6" />
+          <Text style={styles.dateText}>{props.dateTime}</Text>
+        </View>
+        <Pressable onPress={handleEdit} hitSlop={8}>
+          <Feather name="edit-2" size={18} color="#3B82F6" />
+        </Pressable>
       </View>
-      {showMore && (
-        <FieldRecord title="Location" icon="map-pin" content={data.location} />
+
+      {props.location ? (
+        <View style={styles.locationRow}>
+          <Feather name="map-pin" size={14} color="#9CA3AF" />
+          <Text style={styles.locationText}>{props.location}</Text>
+        </View>
+      ) : null}
+
+      {expanded && (
+        <View style={styles.details}>
+          <FieldRecord title="Doctor" icon="user" content={props.doctor} />
+          <FieldRecord title="Diagnosis" icon="clipboard" content={props.diagnosis} />
+          <FieldRecord title="Prescription" icon="heart" content={props.prescription} />
+          <FieldRecord title="Doctor's Note" icon="book" content={props.doctorNote} />
+          <FieldRecord title="Personal Note" icon="pen-tool" content={props.personalNote} />
+          <FieldRecord title="Next Visit" icon="clock" content={props.nextVisit} />
+        </View>
       )}
-      {showMore && (
-        <FieldRecord title="Doctor" icon="user" content={data.doctor} />
-      )}
-      {showMore && (
-        <FieldRecord
-          title="Prescription"
-          icon="heart"
-          content={data.prescription}
-        />
-      )}
-      {showMore && (
-        <FieldRecord
-          title="Diagnosis"
-          icon="clipboard"
-          content={data.diagnosis}
-        />
-      )}
-      {showMore && (
-        <FieldRecord
-          title="Doctor's Note"
-          icon="book"
-          content={data.doctorNote}
-        />
-      )}
-      {showMore && (
-        <FieldRecord
-          title="Personal Note"
-          icon="pen-tool"
-          content={data.personalNote}
-        />
-      )}
-      {showMore && (
-        <FieldRecord title="Next Visit" icon="clock" content={data.nextVisit} />
-      )}
-      {showMore ? (
-        <Text style={styles.showMoreButton} onPress={() => setShowMore(false)}>
-          Show Less
-        </Text>
-      ) : (
-        <Text style={styles.showMoreButton} onPress={() => setShowMore(true)}>
-          Show More
-        </Text>
-      )}
+
+      <Pressable style={styles.toggleRow} onPress={() => setExpanded(!expanded)}>
+        <Text style={styles.toggleText}>{expanded ? "Show less" : "Show more"}</Text>
+        <Feather name={expanded ? "chevron-up" : "chevron-down"} size={16} color="#3B82F6" />
+      </Pressable>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    borderWidth: 1,
-    borderRadius: 18,
-    borderColor: "#007AFF",
-    justifyContent: "flex-start",
-    padding: 30,
-    width: "90%",
-    gap: 20,
+  card: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 16,
+    padding: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 2,
   },
-  recordTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 10,
+  topRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
-  editButton: {
-    color: "blue",
-    fontWeight: "bold",
+  dateRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    flex: 1,
+  },
+  dateText: {
     fontSize: 16,
+    fontWeight: "600",
+    color: "#1F2937",
   },
-  showMoreButton: {
-    color: "blue",
-    fontWeight: "bold",
-    fontSize: 16,
-    alignSelf: "flex-end",
+  locationRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    marginTop: 6,
+  },
+  locationText: {
+    fontSize: 14,
+    color: "#6B7280",
+  },
+  details: {
+    marginTop: 16,
+    paddingTop: 16,
+    borderTopWidth: 1,
+    borderTopColor: "#F3F4F6",
+    gap: 14,
+  },
+  toggleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 4,
+    marginTop: 14,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: "#F3F4F6",
+  },
+  toggleText: {
+    fontSize: 14,
+    fontWeight: "500",
+    color: "#3B82F6",
   },
 });
