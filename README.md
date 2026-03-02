@@ -25,6 +25,6 @@ a digital storage app for your clinic visit records. take photos of your physica
 3. **view your history**: browse past visits in the "past visits" tab to review all your stored records.
 4. **edit or delete**: tap any visit to edit details or delete records as needed.
 
-## Notes
+## notes
 
 currently supports image formats: **jpeg** and **png**. future plans include pdf support, multi-file uploads, user profiles, visit reminders, and cloud sync options.
