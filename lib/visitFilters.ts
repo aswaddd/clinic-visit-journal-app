@@ -30,7 +30,7 @@ export function parseDateToTimestamp(dateStr: string): number {
   return 0;
 }
 
-export type SortField = "date" | "location" | "doctor" | "diagnosis";
+export type SortField = "date" | "location" | "doctor" | "diagnosis" | "created";
 export type SortDir = "asc" | "desc";
 
 export function sortVisits(
@@ -47,6 +47,11 @@ export function sortVisits(
       const tb = parseDateToTimestamp(b.dateTime);
       if (ta !== tb) return mult * (ta - tb);
       return mult * (a.dateTime.localeCompare(b.dateTime));
+    }
+    if (field === "created") {
+      const ca = a.createdDate || (a.id && /^\d+$/.test(a.id) ? new Date(parseInt(a.id, 10)).toISOString() : "");
+      const cb = b.createdDate || (b.id && /^\d+$/.test(b.id) ? new Date(parseInt(b.id, 10)).toISOString() : "");
+      return mult * (ca.localeCompare(cb) || 0);
     }
     const va = (a[field] || "").toLowerCase();
     const vb = (b[field] || "").toLowerCase();
@@ -69,6 +74,7 @@ export function filterVisits(visits: VisitRecord[], query: string): VisitRecord[
     "doctorNote",
     "personalNote",
     "nextVisit",
+    "createdDate",
   ];
 
   return visits.filter((v) =>

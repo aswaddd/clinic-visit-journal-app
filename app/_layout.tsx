@@ -14,15 +14,15 @@ export default function RootLayout() {
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen
         name="pages/pastVisitsPage"
-        options={{ headerTitle: "Past Visits" }}
+        options={{ headerTitle: "Past Visits", headerBackTitle: "Home" }}
       />
       <Stack.Screen
         name="pages/addVisitPage"
-        options={{ headerTitle: "Add Visit" }}
+        options={{ headerTitle: "Add Visit", headerBackTitle: "Home" }}
       />
       <Stack.Screen
         name="pages/editVisitPage"
-        options={{ headerTitle: "Edit Visit" }}
+        options={{ headerTitle: "Edit Visit", headerBackTitle: "Home" }}
       />
     </Stack>
   );

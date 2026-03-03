@@ -2,6 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export interface VisitRecord {
   id?: string;
+  createdDate?: string;
   dateTime: string;
   location: string;
   doctor: string;
@@ -36,8 +37,10 @@ export const saveVisits = async (visits: VisitRecord[]): Promise<void> => {
 export const addVisit = async (visit: VisitRecord): Promise<void> => {
   try {
     const visits = await loadVisits();
+    const now = Date.now();
     const newVisit = {
-      id: Date.now().toString(),
+      id: now.toString(),
+      createdDate: new Date(now).toISOString(),
       ...visit,
     };
     visits.unshift(newVisit);
@@ -67,7 +70,12 @@ export const updateVisit = async (
     const visits = await loadVisits();
     const index = visits.findIndex((v) => v.id === id);
     if (index !== -1) {
-      visits[index] = { ...updatedVisit, id };
+      const existing = visits[index];
+      visits[index] = {
+        ...updatedVisit,
+        id,
+        createdDate: existing.createdDate ?? new Date(parseInt(id, 10) || Date.now()).toISOString(),
+      };
       await saveVisits(visits);
     } else {
       throw new Error("Visit not found");

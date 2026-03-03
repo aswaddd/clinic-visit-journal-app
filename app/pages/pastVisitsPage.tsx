@@ -21,6 +21,7 @@ import {
 
 const SORT_OPTIONS: { field: SortField; label: string }[] = [
   { field: "date", label: "Date" },
+  { field: "created", label: "Recently Added" },
   { field: "location", label: "Location" },
   { field: "doctor", label: "Doctor" },
   { field: "diagnosis", label: "Diagnosis" },
@@ -85,7 +86,12 @@ export default function PastVisitsPage() {
           </View>
           <View style={styles.sortRow}>
             <Text style={styles.sortLabel}>Sort:</Text>
-            {SORT_OPTIONS.map(({ field, label }) => (
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.sortScrollContent}
+            >
+              {SORT_OPTIONS.map(({ field, label }) => (
               <Pressable
                 key={field}
                 style={[
@@ -111,6 +117,7 @@ export default function PastVisitsPage() {
                 )}
               </Pressable>
             ))}
+            </ScrollView>
           </View>
         </View>
       )}
@@ -169,7 +176,10 @@ const styles = StyleSheet.create({
   sortRow: {
     flexDirection: "row",
     alignItems: "center",
-    flexWrap: "wrap",
+  },
+  sortScrollContent: {
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
   },
   sortLabel: {

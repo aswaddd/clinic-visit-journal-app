@@ -6,6 +6,7 @@ import FieldRecord from "./FieldRecord";
 
 type Props = {
   id?: string;
+  createdDate?: string;
   dateTime: string;
   location: string;
   doctor: string;
@@ -16,8 +17,23 @@ type Props = {
   nextVisit: string;
 };
 
+function formatCreatedDate(createdDate?: string, id?: string): string | null {
+  let iso: string | null = null;
+  if (createdDate) iso = createdDate;
+  else if (id && /^\d+$/.test(id)) iso = new Date(parseInt(id, 10)).toISOString();
+  if (!iso) return null;
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return null;
+  return d.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
 export default function PastVisit(props: Props) {
   const [expanded, setExpanded] = useState(false);
+  const createdLabel = formatCreatedDate(props.createdDate, props.id);
 
   const handleEdit = () => {
     router.push({
@@ -60,6 +76,10 @@ export default function PastVisit(props: Props) {
         <Text style={styles.toggleText}>{expanded ? "Show less" : "Show more"}</Text>
         <Feather name={expanded ? "chevron-up" : "chevron-down"} size={16} color="#3B82F6" />
       </Pressable>
+
+      {createdLabel && (
+        <Text style={styles.createdText}>Added {createdLabel}</Text>
+      )}
     </View>
   );
 }
@@ -122,5 +142,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "500",
     color: "#3B82F6",
+  },
+  createdText: {
+    fontSize: 11,
+    color: "#9CA3AF",
+    marginTop: 10,
   },
 });
