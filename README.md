@@ -1,6 +1,6 @@
 # clinic visit journal app
 
-a digital storage app for your clinic visit records. take photos of your physical prescriptions and medical visit records, and store them securely on your phone. all storage is local and the llm model runs locally to ensure your privacy and security (unless your phone itself is compromised).
+a digital journal app for your clinic visit records. take photos of your physical prescriptions and medical visit records, and store them securely on your phone. all storage is local and the llm model (currently using QWEN2_5_0_5B_QUANTIZED) runs locally to ensure your privacy and security (unless your phone itself is compromised).
 
 ## setup
 
@@ -27,4 +27,4 @@ a digital storage app for your clinic visit records. take photos of your physica
 
 ## notes
 
-currently supports image formats: **jpeg** and **png**. future plans include pdf support, multi-file uploads, user profiles, visit reminders, and cloud sync options.
+currently supports image formats: **jpeg**, **png**, **webp** and **heic**.

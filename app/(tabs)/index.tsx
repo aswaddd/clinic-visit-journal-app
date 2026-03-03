@@ -13,14 +13,19 @@ import {
   Text,
   View,
 } from "react-native";
-import { LLAMA3_2_1B, useLLM } from "react-native-executorch";
+import { QWEN2_5_0_5B_QUANTIZED, useLLM } from "react-native-executorch";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const IMAGE_MIME_TYPES = ["image/jpeg", "image/png", "image/webp", "image/heic"];
+const IMAGE_MIME_TYPES = [
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/heic",
+];
 
 export default function Index() {
   const [isProcessing, setIsProcessing] = useState(false);
-  const llm = useLLM({ model: LLAMA3_2_1B });
+  const llm = useLLM({ model: QWEN2_5_0_5B_QUANTIZED });
 
   useEffect(() => {
     console.log("LLM State:", {
@@ -35,7 +40,10 @@ export default function Index() {
 
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== "granted") {
-      Alert.alert("Permission Required", "Camera access is needed to scan documents.");
+      Alert.alert(
+        "Permission Required",
+        "Camera access is needed to scan documents.",
+      );
       return;
     }
 
@@ -81,10 +89,15 @@ export default function Index() {
         <Text style={styles.title}>Clinic Journal</Text>
         <View style={styles.statusBadge}>
           <View
-            style={[styles.statusDot, { backgroundColor: llm.isReady ? "#22C55E" : "#F59E0B" }]}
+            style={[
+              styles.statusDot,
+              { backgroundColor: llm.isReady ? "#22C55E" : "#F59E0B" },
+            ]}
           />
           <Text style={styles.statusText}>
-            {llm.isReady ? "AI Ready" : `Loading ${(llm.downloadProgress * 100).toFixed(0)}%`}
+            {llm.isReady
+              ? "AI Ready"
+              : `Loading ${(llm.downloadProgress * 100).toFixed(0)}%`}
           </Text>
         </View>
       </View>
@@ -92,16 +105,8 @@ export default function Index() {
       <View style={styles.content}>
         <Text style={styles.sectionLabel}>New Visit</Text>
         <View style={styles.row}>
-          <ActionCard
-            icon="camera"
-            label="Scan"
-            onPress={handleCameraScan}
-          />
-          <ActionCard
-            icon="image"
-            label="Import"
-            onPress={handleImportVisit}
-          />
+          <ActionCard icon="camera" label="Scan" onPress={handleCameraScan} />
+          <ActionCard icon="image" label="Import" onPress={handleImportVisit} />
           <ActionCard
             icon="edit-3"
             label="Manual"
